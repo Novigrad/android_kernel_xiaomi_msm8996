@@ -13800,7 +13800,7 @@ static ssize_t mic_gain_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
 {
 	return snprintf(buf, PAGE_SIZE, "%d\n",
-		snd_soc_read(sound_control_codec_ptr, WCD9335_CDC_RX0_RX_VOL_CTL));
+		snd_soc_read(sound_control_codec_ptr, WCD9335_CDC_TX6_TX_VOL_CTL));
 }
 
 static ssize_t mic_gain_store(struct kobject *kobj,
@@ -13813,7 +13813,8 @@ static ssize_t mic_gain_store(struct kobject *kobj,
 	if (input < -10 || input > 20)
 		input = 0;
 
-	snd_soc_write(sound_control_codec_ptr, WCD9335_CDC_RX0_RX_VOL_CTL, input);
+	snd_soc_write(sound_control_codec_ptr, WCD9335_CDC_TX6_TX_VOL_CTL, input);
+	snd_soc_write(sound_control_codec_ptr, WCD9335_CDC_TX7_TX_VOL_CTL, input);
 
 	return count;
 }
@@ -13824,7 +13825,7 @@ static struct kobj_attribute mic_gain_attribute =
 		mic_gain_store);
 
 struct snd_soc_codec *tfa98xx_codec_ptr;
-#include "tfa9890/tfa98xx-regs.h"
+#include "tfa9891_genregs.h"
 #define TO_FIXED(e) e
 static ssize_t speaker_gain_show(struct kobject *kobj,
 		struct kobj_attribute *attr, char *buf)
