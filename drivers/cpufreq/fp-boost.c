@@ -111,10 +111,7 @@ static int do_cpu_boost(struct notifier_block *nb,
 	struct boost_policy *b = boost_policy_g;
 	uint32_t state;
 
-	if (action != CPUFREQ_ADJUST)
-		return NOTIFY_OK;
-
-	if (is_display_on())
+	if ((action != CPUFREQ_ADJUST) && (is_display_on()))
 		return NOTIFY_OK;
 
 	state = get_boost_state(b);
@@ -129,12 +126,12 @@ static int do_cpu_boost(struct notifier_block *nb,
 
 	/* Boost CPU to max frequency for fingerprint boost */
 	if (state & FINGERPRINT_BOOST) {
-		sched_set_boost(1);
 		pr_info("Boosting\n");
+		sched_set_boost(1);
 		policy->cur = policy->max;
 		policy->min = policy->max;
-		return NOTIFY_OK;
 		sched_set_boost(0);
+		return NOTIFY_OK;
 	}
 
 	return NOTIFY_OK;
