@@ -853,7 +853,7 @@ int mmc_add_host(struct mmc_host *host)
 	host->clk_scaling.upthreshold = MMC_DEVFRQ_DEFAULT_UP_THRESHOLD;
 	host->clk_scaling.downthreshold = MMC_DEVFRQ_DEFAULT_DOWN_THRESHOLD;
 	host->clk_scaling.polling_delay_ms = MMC_DEVFRQ_DEFAULT_POLLING_MSEC;
-	host->clk_scaling.skip_clk_scale_freq_update = false;
+	host->clk_scaling.skip_clk_scale_freq_update = true;
 
 #ifdef CONFIG_DEBUG_FS
 	mmc_add_host_debugfs(host);
