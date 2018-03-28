@@ -11486,8 +11486,6 @@ static int tasha_startup(struct snd_pcm_substream *substream,
 static void tasha_shutdown(struct snd_pcm_substream *substream,
 		struct snd_soc_dai *dai)
 {
-	struct tasha_priv *tasha = snd_soc_codec_get_drvdata(dai->codec);
-
 	pr_debug("%s(): substream = %s  stream = %d\n" , __func__,
 		 substream->name, substream->stream);
 
