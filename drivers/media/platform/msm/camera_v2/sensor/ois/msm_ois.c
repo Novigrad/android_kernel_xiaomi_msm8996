@@ -992,7 +992,7 @@ static int32_t msm_ois_platform_probe(struct platform_device *pdev)
 		(&pdev->dev)->of_node);
 	if (-ENODEV == rc) {
 		pr_notice("No valid OIS GPIOs data\n");
-	} else if (rc < 0) {
+	} else if (rc <= 0) {
 		pr_err("Error OIS GPIO\n");
 	} else {
 		msm_ois_t->cam_pinctrl_status = 1;
