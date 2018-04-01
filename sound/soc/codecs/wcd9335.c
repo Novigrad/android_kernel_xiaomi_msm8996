@@ -5791,7 +5791,7 @@ static void tasha_tx_hpf_corner_freq_callback(struct work_struct *work)
 	struct hpf_work *hpf_work;
 	struct tasha_priv *tasha;
 	struct snd_soc_codec *codec;
-	u16 dec_cfg_reg, amic_reg;
+	u16 dec_cfg_reg = 0, amic_reg;
 	u8 hpf_cut_off_freq;
 	int amic_n;
 
@@ -5847,7 +5847,7 @@ static int tasha_codec_enable_dec(struct snd_soc_dapm_widget *w,
 	char *widget_name = NULL;
 	char *wname;
 	int ret = 0, amic_n;
-	u16 tx_vol_ctl_reg, pwr_level_reg = 0, dec_cfg_reg, hpf_gate_reg;
+	u16 tx_vol_ctl_reg, pwr_level_reg = 0, dec_cfg_reg = 0, hpf_gate_reg;
 	u16 tx_gain_ctl_reg;
 	char *dec;
 	u8 hpf_cut_off_freq;
