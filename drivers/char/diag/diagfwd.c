@@ -432,14 +432,9 @@ void diag_update_pkt_buffer(unsigned char *buf, uint32_t len, int type)
 	}
 
 	mutex_lock(&driver->diagchar_mutex);
-	if (CHK_OVERFLOW(ptr, ptr, ptr + max_len, len)) {
-		memcpy(ptr, temp , len);
-		*length = len;
-		*in_busy = 1;
-	} else {
-		pr_alert("diag: In %s, no space for response packet, len: %d, type: %d\n",
-			 __func__, len, type);
-	}
+	memcpy(ptr, temp , len);
+	*length = len;
+	*in_busy = 1;
 	mutex_unlock(&driver->diagchar_mutex);
 }
 
