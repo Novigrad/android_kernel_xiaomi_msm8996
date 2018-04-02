@@ -282,36 +282,6 @@ static void mdss_mdp_kcal_update_pa(struct kcal_lut_data *lut_data)
 	}
 }
 
-static void mdss_mdp_kcal_update_igc(struct kcal_lut_data *lut_data)
-{
-	u32 copyback = 0, copy_from_kernel = 1;
-	struct mdp_igc_lut_data igc_config;
-	struct mdp_igc_lut_data_v1_7 *payload;
-
-	if (!mdss_mdp_kcal_store_fb0_ctl()) return;
-
-	memset(&igc_config, 0, sizeof(struct mdp_igc_lut_data));
-
-	igc_config.version = mdp_igc_v1_7;
-	igc_config.block = MDP_LOGICAL_BLOCK_DISP_0;
-	igc_config.ops = lut_data->invert && lut_data->enable ?
-		MDP_PP_OPS_WRITE | MDP_PP_OPS_ENABLE :
-			MDP_PP_OPS_WRITE | MDP_PP_OPS_DISABLE;
-	igc_config.len = IGC_LUT_ENTRIES;
-	igc_config.c0_c1_data = &igc_Table_Inverted[0];
-	igc_config.c2_data = &igc_Table_RGB[0];
-
-	payload = kzalloc(sizeof(struct mdp_igc_lut_data_v1_7),GFP_USER);
-	payload->len = IGC_LUT_ENTRIES;
-	payload->c0_c1_data = &igc_Table_Inverted[0];
-	payload->c2_data = &igc_Table_RGB[0];
-
-	igc_config.cfg_payload = payload;
-
-	mdss_mdp_igc_lut_config(fb0_ctl->mfd, &igc_config, &copyback, copy_from_kernel);
-	kfree(payload);
-}
-
 static ssize_t kcal_store(struct device *dev, struct device_attribute *attr,
 						const char *buf, size_t count)
 {
@@ -383,7 +353,6 @@ static ssize_t kcal_enable_store(struct device *dev,
 
 	mdss_mdp_kcal_update_pcc(lut_data);
 	mdss_mdp_kcal_update_pa(lut_data);
-	mdss_mdp_kcal_update_igc(lut_data);
 	mdss_mdp_kcal_display_commit();
 
 	return count;
@@ -408,10 +377,7 @@ static ssize_t kcal_invert_store(struct device *dev,
 		(lut_data->invert == kcal_invert))
 		return -EINVAL;
 
-	lut_data->invert = kcal_invert;
-
-	mdss_mdp_kcal_update_igc(lut_data);
-	mdss_mdp_kcal_display_commit();
+	lut_data->invert = 0;
 
 	return count;
 }
