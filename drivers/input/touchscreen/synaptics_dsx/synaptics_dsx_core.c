@@ -1852,7 +1852,7 @@ static void synaptics_rmi4_sensor_report(struct synaptics_rmi4_data *rmi4_data,
 		}
 	}
 	if (status.unconfigured && !status.flash_prog) {
-		pr_notice("%s: spontaneous reset detected\n", __func__);
+		pr_debug("%s: spontaneous reset detected\n", __func__);
 		retval = synaptics_rmi4_reinit_device(rmi4_data);
 		if (retval < 0) {
 			dev_err(rmi4_data->pdev->dev.parent,
@@ -5499,7 +5499,7 @@ static int synaptics_rmi4_pm_suspend(struct device *dev)
 	if (device_may_wakeup(dev) &&
 			rmi4_data->enable_wakeup_gesture &&
 			!bdata->cut_off_power) {
-		dev_info(rmi4_data->pdev->dev.parent,
+		dev_dbg(rmi4_data->pdev->dev.parent,
 			"Enable touch irq wake\n");
 		disable_irq(rmi4_data->irq);
 		enable_irq_wake(rmi4_data->irq);
@@ -5518,7 +5518,7 @@ static int synaptics_rmi4_pm_resume(struct device *dev)
 	if (device_may_wakeup(dev) &&
 			rmi4_data->enable_wakeup_gesture &&
 			!bdata->cut_off_power) {
-		dev_info(rmi4_data->pdev->dev.parent,
+		dev_dbg(rmi4_data->pdev->dev.parent,
 			"Disable touch irq wake\n");
 		disable_irq_wake(rmi4_data->irq);
 		enable_irq(rmi4_data->irq);
