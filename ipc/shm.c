@@ -1208,7 +1208,7 @@ out:
 
 SYSCALL_DEFINE3(shmat, int, shmid, char __user *, shmaddr, int, shmflg)
 {
-	unsigned long ret;
+	unsigned long ret = 0UL;
 	long err;
 
 	err = do_shmat(shmid, shmaddr, shmflg, &ret, SHMLBA);

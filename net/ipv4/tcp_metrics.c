@@ -267,7 +267,7 @@ static struct tcp_metrics_block *__tcp_get_metrics_req(struct request_sock *req,
 static struct tcp_metrics_block *__tcp_get_metrics_tw(struct inet_timewait_sock *tw)
 {
 	struct tcp_metrics_block *tm;
-	struct inetpeer_addr saddr, daddr;
+	struct inetpeer_addr saddr = {0}, daddr;
 	unsigned int hash;
 	struct net *net;
 
