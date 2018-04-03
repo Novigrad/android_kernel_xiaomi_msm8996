@@ -48,7 +48,7 @@ static int set_cpu_freq(struct cpufreq_policy *policy, unsigned int new_freq,
 {
 	int ret = 0;
 	struct cpufreq_freqs freqs;
-	unsigned long rate = 0L;
+	unsigned long rate = 0UL;
 
 	freqs.old = policy->cur;
 	freqs.new = new_freq;
@@ -71,8 +71,7 @@ static int msm_cpufreq_target(struct cpufreq_policy *policy,
 				unsigned int target_freq,
 				unsigned int relation)
 {
-	int ret = 0;
-	int index = 0;
+	int ret = 0, index = 0;
 	struct cpufreq_frequency_table *table;
 
 	mutex_lock(&per_cpu(suspend_data, policy->cpu).suspend_mutex);
@@ -126,12 +125,9 @@ static unsigned int msm_cpufreq_get_freq(unsigned int cpu)
 
 static int msm_cpufreq_init(struct cpufreq_policy *policy)
 {
-	int cur_freq = 0;
-	int index = 0;
-	int ret = 0;
 	struct cpufreq_frequency_table *table =
 			per_cpu(freq_table, policy->cpu);
-	int cpu = 0;
+	int cur_freq = 0, index = 0, ret = 0, cpu = 0;
 
 	/*
 	 * In some SoC, some cores are clocked by same source, and their
