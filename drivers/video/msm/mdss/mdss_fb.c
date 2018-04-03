@@ -1782,8 +1782,10 @@ static void mdss_fb_stop_disp_thread(struct msm_fb_data_type *mfd)
 	pr_debug("%pS: stop display thread fb%d\n",
 		__builtin_return_address(0), mfd->index);
 
+	mutex_lock(&mfd->mdp_sync_pt_data.sync_mutex);
 	kthread_stop(mfd->disp_thread);
 	mfd->disp_thread = NULL;
+	mutex_unlock(&mfd->mdp_sync_pt_data.sync_mutex);
 }
 
 static void mdss_panel_validate_debugfs_info(struct msm_fb_data_type *mfd)
@@ -3232,10 +3234,12 @@ static int mdss_fb_pan_display_ex(struct fb_info *info,
 	mfd->msm_fb_backup.info = *info;
 	mfd->msm_fb_backup.disp_commit = *disp_commit;
 
-	atomic_inc(&mfd->mdp_sync_pt_data.commit_cnt);
-	atomic_inc(&mfd->commits_pending);
-	atomic_inc(&mfd->kickoff_pending);
-	wake_up_all(&mfd->commit_wait_q);
+	if (mfd->disp_thread) {
+		atomic_inc(&mfd->mdp_sync_pt_data.commit_cnt);
+		atomic_inc(&mfd->commits_pending);
+		atomic_inc(&mfd->kickoff_pending);
+		wake_up_all(&mfd->commit_wait_q);
+	}
 	mutex_unlock(&mfd->mdp_sync_pt_data.sync_mutex);
 	if (wait_for_finish) {
 		ret = mdss_fb_pan_idle(mfd);
