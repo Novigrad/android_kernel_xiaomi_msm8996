@@ -314,7 +314,6 @@ struct _qpnp_pwm_config {
 	struct pwm_period_config	period;
 	int				supported_sizes;
 	int				force_pwm_size;
-	bool			update_period;
 };
 
 /* Public facing structure */
@@ -1290,33 +1289,27 @@ static int _pwm_config(struct qpnp_pwm_chip *chip,
 			duty_value / NSEC_PER_USEC;
 	qpnp_lpg_calc_pwm_value(pwm_config, period_value, duty_value);
 	rc = qpnp_lpg_save_pwm_value(chip);
-
+	if (rc)
+		goto out;
+	rc = qpnp_lpg_configure_pwm(chip);
+	if (rc)
+		goto out;
+	rc = qpnp_configure_pwm_control(chip);
 	if (rc)
 		goto out;
 
-	if (pwm_config->update_period) {
-		rc = qpnp_lpg_configure_pwm(chip);
-		if (rc)
-			goto out;
-		rc = qpnp_configure_pwm_control(chip);
-		if (rc)
-			goto out;
-		if (!rc && chip->enabled) {
-			rc = qpnp_lpg_configure_pwm_state(chip,
-					QPNP_PWM_ENABLE);
-			if (rc) {
-				pr_err("Error in configuring pwm state, rc=%d\n",
-						rc);
-				return rc;
-			}
+	if (!rc && chip->enabled) {
+		rc = qpnp_lpg_configure_pwm_state(chip, QPNP_PWM_ENABLE);
+		if (rc) {
+			pr_err("Error in configuring pwm state, rc=%d\n", rc);
+			return rc;
+		}
 
-			/* Enable the glitch removal after PWM is enabled */
-			rc = qpnp_lpg_glitch_removal(chip, true);
-			if (rc) {
-				pr_err("Error in enabling glitch control, rc=%d\n",
-						rc);
-				return rc;
-			}
+		/* Enable the glitch removal after PWM is enabled */
+		rc = qpnp_lpg_glitch_removal(chip, true);
+		if (rc) {
+			pr_err("Error in enabling glitch control, rc=%d\n", rc);
+			return rc;
 		}
 	}
 
@@ -1473,14 +1466,12 @@ static int qpnp_pwm_config(struct pwm_chip *pwm_chip,
 
 	spin_lock_irqsave(&chip->lpg_lock, flags);
 
-	chip->pwm_config.update_period = false;
 	if (prev_period_us > INT_MAX / NSEC_PER_USEC ||
 			prev_period_us * NSEC_PER_USEC != period_ns) {
 		qpnp_lpg_calc_period(LVL_NSEC, period_ns, chip);
 		qpnp_lpg_save_period(chip);
 		pwm->period = period_ns;
 		chip->pwm_config.pwm_period = period_ns / NSEC_PER_USEC;
-		chip->pwm_config.update_period = true;
 	}
 
 	rc = _pwm_config(chip, LVL_NSEC, duty_ns, period_ns);
@@ -1766,7 +1757,6 @@ int pwm_config_us(struct pwm_device *pwm, int duty_us, int period_us)
 
 	spin_lock_irqsave(&chip->lpg_lock, flags);
 
-	chip->pwm_config.update_period = false;
 	if (chip->pwm_config.pwm_period != period_us) {
 		qpnp_lpg_calc_period(LVL_USEC, period_us, chip);
 		qpnp_lpg_save_period(chip);
@@ -1881,7 +1871,6 @@ static int qpnp_parse_pwm_dt_config(struct device_node *of_pwm_node,
 	qpnp_lpg_calc_period(LVL_USEC, period, chip);
 	qpnp_lpg_save_period(chip);
 	chip->pwm_config.pwm_period = period;
-	chip->pwm_config.update_period = true;
 
 	rc = _pwm_config(chip, LVL_USEC, chip->pwm_config.pwm_duty, period);
 
