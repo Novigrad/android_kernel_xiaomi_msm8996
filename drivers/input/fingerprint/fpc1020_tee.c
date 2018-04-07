@@ -172,7 +172,7 @@ static void set_fingerprintd_nice(int nice)
 
 	read_lock(&tasklist_lock);
 	for_each_process(p) {
-		if ((!memcmp(p->comm, "fps_work", 8)) || (!memcmp(p->comm, "fingerprintd", 12))) {
+		if (!memcmp(p->comm, "fingerprint@2.1", 16)) {
 			set_user_nice(p, nice);
 			break;
 		}
