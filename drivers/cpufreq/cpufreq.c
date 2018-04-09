@@ -847,7 +847,7 @@ static ssize_t show_affected_cpus(struct cpufreq_policy *policy, char *buf)
 static ssize_t store_scaling_setspeed(struct cpufreq_policy *policy,
 					const char *buf, size_t count)
 {
-	unsigned int freq;
+	unsigned int freq = 0;
 	unsigned int ret;
 
 	if (!policy->governor || !policy->governor->store_setspeed)
@@ -1042,7 +1042,7 @@ EXPORT_SYMBOL(cpufreq_sysfs_remove_file);
 static int cpufreq_add_dev_symlink(struct cpufreq_policy *policy)
 {
 	unsigned int j;
-	int ret;
+	int ret = 0;
 
 	for_each_cpu(j, policy->cpus) {
 		struct device *cpu_dev;
@@ -1064,7 +1064,7 @@ static int cpufreq_add_dev_interface(struct cpufreq_policy *policy,
 				     struct device *dev)
 {
 	struct freq_attr **drv_attr;
-	int ret;
+	int ret = 0;
 
 	/* set up files for this cpu device */
 	drv_attr = cpufreq_driver->attr;
@@ -1099,7 +1099,7 @@ static void cpufreq_init_policy(struct cpufreq_policy *policy)
 {
 	struct cpufreq_governor *gov = NULL;
 	struct cpufreq_policy new_policy;
-	int ret;
+	int ret = 0;
 
 	/* Restore policy->min/max for hotplug */
 	if (per_cpu(cpufreq_policy_save, policy->cpu).min) {
@@ -1142,7 +1142,7 @@ static void cpufreq_init_policy(struct cpufreq_policy *policy)
 static int cpufreq_add_policy_cpu(struct cpufreq_policy *policy,
 				  unsigned int cpu, struct device *dev)
 {
-	int ret;
+	int ret = 0;
 	unsigned long flags;
 
 	if (has_target()) {
@@ -2579,7 +2579,7 @@ static int cpufreq_boost_set_sw(int state)
 int cpufreq_boost_trigger_state(int state)
 {
 	unsigned long flags;
-	int ret;
+	int ret = 0;
 
 	if (cpufreq_driver->boost_enabled == state)
 		return 0;
