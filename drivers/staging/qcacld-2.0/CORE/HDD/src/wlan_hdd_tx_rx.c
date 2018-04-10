@@ -876,7 +876,9 @@ void wlan_display_tx_timeout_stats(hdd_adapter_t *adapter)
  */
 static void __hdd_tx_timeout(struct net_device *dev)
 {
+#ifdef BUILD_DEBUG_VERSION
    hdd_adapter_t *pAdapter =  WLAN_HDD_GET_PRIV_PTR(dev);
+#endif /* BUILD_DEBUG_VERSION */
    struct netdev_queue *txq;
    int i = 0;
 

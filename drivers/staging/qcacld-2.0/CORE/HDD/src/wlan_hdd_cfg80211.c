@@ -24045,6 +24045,7 @@ disconnected:
  * Return: string conversion of reason code, if match found;
  *         "Unknown" otherwise.
  */
+#ifdef BUILD_DEBUG_VERSION
 static const char *hdd_ieee80211_reason_code_to_str(uint16_t reason)
 {
 	switch (reason) {
@@ -24099,6 +24100,8 @@ static const char *hdd_ieee80211_reason_code_to_str(uint16_t reason)
 		return "Unknown";
 	}
 }
+#endif /* BUILD_DEBUG_VERSION */
+
 /*
  * FUNCTION: __wlan_hdd_cfg80211_disconnect
  * This function is used to issue a disconnect request to SME
