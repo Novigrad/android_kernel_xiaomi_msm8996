@@ -4030,6 +4030,11 @@
 		qcom,save-reg;
 	};
 
+	audio_amplifier {
+		compatible = "aw,aw8738";
+		ext-spk-amp-gpio = <&tlmm 101 0>;
+	};
+
 	qcom,msm-power {
 		compatible = "qcom,msm-power";
 		clock-names = "gpu_clk";
