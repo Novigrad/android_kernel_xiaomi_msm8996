@@ -2897,7 +2897,7 @@ static int taiko_codec_config_mad(struct snd_soc_codec *codec)
 	}
 
 	if (fw->size < sizeof(struct mad_audio_cal)) {
-		pr_err("%s: incorrect firmware size %u\n", __func__, fw->size);
+		pr_debug("%s: incorrect firmware size %u\n", __func__, fw->size);
 		release_firmware(fw);
 		return -ENOMEM;
 	}

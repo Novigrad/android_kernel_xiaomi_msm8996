@@ -78,7 +78,7 @@ static int wcdcal_hwdep_ioctl_shared(struct snd_hwdep *hw,
 	}
 	if (fw_user.size > cal_size_info[fw_user.cal_type] ||
 		fw_user.size <= 0) {
-		pr_err("%s: incorrect firmware size %d for %s\n",
+		pr_debug("%s: incorrect firmware size %d for %s\n",
 			__func__, fw_user.size,
 			cal_name_info[fw_user.cal_type]);
 		return -EFAULT;

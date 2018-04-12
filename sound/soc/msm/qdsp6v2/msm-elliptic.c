@@ -449,7 +449,7 @@ int elliptic_calibration_param_get(
 {
 	struct soc_mixer_control *mc =
 		(struct soc_mixer_control *)kcontrol->private_value;
-	pr_err("%s: \n", __func__);
+	pr_debug("%s: \n", __func__);
 
 	if (mc->reg != ELLIPTIC_CALIBRATION)
 		return -EINVAL;
@@ -518,7 +518,7 @@ int elliptic_system_configuration_param_get(
 {
 	struct soc_mixer_control *mc =
 		(struct soc_mixer_control *)kcontrol->private_value;
-	pr_err("%s: \n", __func__);
+	pr_debug("%s: \n", __func__);
 
 	if (mc->reg != ELLIPTIC_SYSTEM_CONFIGURATION)
 		return -EINVAL;
