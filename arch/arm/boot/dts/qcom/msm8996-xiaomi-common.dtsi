@@ -1973,4 +1973,9 @@
 		};
 	};
 };
+
+	audio_amplifier {
+		compatible = "aw,aw8738";
+		ext-spk-amp-gpio = <&msm_gpio 101 0>;
+	};
 // msm8996.dtsi end
