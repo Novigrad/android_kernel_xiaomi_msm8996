@@ -1316,6 +1316,15 @@ config CRYPTO_TWOFISH_AVX_X86_64
 	  See also:
 	  <http://www.schneier.com/twofish.html>
 
+config CRYPTO_ACOMP2
+	tristate
+	select CRYPTO_ALGAPI2
+
+config CRYPTO_ACOMP
+	tristate
+	select CRYPTO_ALGAPI
+	select CRYPTO_ACOMP2
+
 comment "Compression"
 
 config CRYPTO_DEFLATE
