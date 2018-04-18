@@ -23,10 +23,11 @@
 #include <linux/slab.h>
 #include <linux/spinlock.h>
 #include <linux/string.h>
+#include <linux/compiler.h>
 
 struct seqiv_ctx {
 	spinlock_t lock;
-	u8 salt[] __attribute__ ((aligned(__alignof__(u32))));
+	u8 salt[] __aligned(__alignof__(u32));
 };
 
 static void seqiv_complete2(struct skcipher_givcrypt_request *req, int err)
