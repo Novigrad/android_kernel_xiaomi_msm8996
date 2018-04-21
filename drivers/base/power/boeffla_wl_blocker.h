@@ -19,5 +19,5 @@
 #define LIST_WL_DEFAULT				"qcom_rx_wakelock;wlan;wlan_wow_wl;wlan_extscan_wl;netmgr_wl;NETLINK[timerfd];wlan_ipa;wlan_pno_wl;wcnss_filter_lock;si;msm_hsic;wlan_rx_wake;wlan_ctrl_wake;wlan_wake;bluedroid_timer;bluetooth_timer;qbt_wake_source;IPA_WS;DIAG_WS;qcom_sap_wakelock"
 
 #define LENGTH_LIST_WL				255
-#define LENGTH_LIST_WL_DEFAULT		246
+#define LENGTH_LIST_WL_DEFAULT		247
 #define LENGTH_LIST_WL_SEARCH		LENGTH_LIST_WL + LENGTH_LIST_WL_DEFAULT + 5
