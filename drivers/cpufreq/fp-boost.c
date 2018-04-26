@@ -127,10 +127,8 @@ static int do_cpu_boost(struct notifier_block *nb,
 	/* Boost CPU to max frequency for fingerprint boost */
 	if (state & FINGERPRINT_BOOST) {
 		pr_info("Boosting\n");
-		sched_set_boost(1);
 		policy->cur = policy->max;
 		policy->min = policy->max;
-		sched_set_boost(0);
 		return NOTIFY_OK;
 	}
 
