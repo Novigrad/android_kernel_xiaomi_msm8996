@@ -115,7 +115,7 @@ static int do_cpu_boost(struct notifier_block *nb,
 		return NOTIFY_OK;
 
 	if (is_display_on())
-		return;
+		return NOTIFY_OK;
 
 	state = get_boost_state(b);
 
