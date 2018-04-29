@@ -118,7 +118,7 @@ static void unregister_input_handler(void);
 
 #ifdef CONFIG_SCHED_HMP
 static DEFINE_PER_CPU(unsigned int, cpu_power_cost);
-#ifdef CONFIG_SCHED_HMP
+#endif // CONFIG_SCHED_HMP
 
 struct load_stats {
 	u64 last_wallclock;
