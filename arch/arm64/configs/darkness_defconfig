@@ -1,6 +1,6 @@
 #
 # Automatically generated file; DO NOT EDIT.
-# Linux/arm64 3.18.105-Darkness Kernel Configuration
+# Linux/arm64 3.18.106-Darkness Kernel Configuration
 #
 CONFIG_ARM64=y
 CONFIG_64BIT=y
@@ -158,6 +158,7 @@ CONFIG_IPC_NS=y
 CONFIG_NET_NS=y
 # CONFIG_SCHED_AUTOGROUP is not set
 CONFIG_SCHED_TUNE=y
+CONFIG_DYNAMIC_STUNE_BOOST=y
 # CONFIG_SYSFS_DEPRECATED is not set
 CONFIG_RELAY=y
 CONFIG_BLK_DEV_INITRD=y
@@ -589,6 +590,7 @@ CONFIG_CPU_FREQ_GOV_SCHEDUTIL=y
 #
 # CONFIG_CPUFREQ_DT is not set
 CONFIG_FINGERPRINT_BOOST=y
+CONFIG_CPU_BOOST=y
 
 #
 # ARM CPU frequency scaling drivers
