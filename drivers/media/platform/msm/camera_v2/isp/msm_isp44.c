@@ -525,7 +525,6 @@ static void msm_vfe44_process_epoch_irq(struct vfe_device *vfe_dev,
 				msm_isp_axi_stream_update(vfe_dev, VFE_PIX_0);
 				vfe_dev->hw_info->vfe_ops.core_ops.reg_update(
 					vfe_dev, VFE_PIX_0);
-			}
 		}
 	}
 }

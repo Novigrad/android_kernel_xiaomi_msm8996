@@ -119,7 +119,7 @@ fixup_cumulative_runnable_avg(struct rq *rq,
 u64 walt_ktime_clock(void)
 {
     if (unlikely(walt_ktime_suspended))
-		return ktime_to_ns(ktime_last);
+	return ktime_to_ns(ktime_last);
     return ktime_get_ns();
 }
 
@@ -162,10 +162,10 @@ void walt_dec_cfs_cumulative_runnable_avg(struct cfs_rq *cfs_rq,
 static int exiting_task(struct task_struct *p)
 {
     if (p->flags & PF_EXITING) {
-		if (p->ravg.sum_history[0] != EXITING_TASK_MARKER) {
-		    p->ravg.sum_history[0] = EXITING_TASK_MARKER;
-		}
-		return 1;
+	if (p->ravg.sum_history[0] != EXITING_TASK_MARKER) {
+	    p->ravg.sum_history[0] = EXITING_TASK_MARKER;
+	}
+	return 1;
     }
     return 0;
 }
@@ -237,7 +237,7 @@ static u64 scale_exec_time(u64 delta, struct rq *rq)
 static int cpu_is_waiting_on_io(struct rq *rq)
 {
     if (!walt_io_is_busy)
-		return 0;
+	return 0;
 
     return atomic_read(&rq->nr_iowait);
 }
@@ -290,16 +290,16 @@ u64 walt_irqload(int cpu) {
 	s64 delta;
 	delta = get_jiffies_64() - rq->irqload_ts;
 
-	 /*
+        /*
 	 * Current context can be preempted by irq and rq->irqload_ts can be
 	 * updated by irq context so that delta can be negative.
 	 * But this is okay and we can safely return as this means there
 	 * was recent irq occurrence.
 	 */
 
-	if (delta < WALT_HIGH_IRQ_TIMEOUT)
+        if (delta < WALT_HIGH_IRQ_TIMEOUT)
 		return rq->avg_irqload;
-	else
+        else
 		return 0;
 }
 
@@ -311,20 +311,20 @@ static int account_busy_for_cpu_time(struct rq *rq, struct task_struct *p,
 		     u64 irqtime, int event)
 {
     if (is_idle_task(p)) {
-		/* TASK_WAKE && TASK_MIGRATE is not possible on idle task! */
-		if (event == PICK_NEXT_TASK)
-		    return 0;
+	/* TASK_WAKE && TASK_MIGRATE is not possible on idle task! */
+	if (event == PICK_NEXT_TASK)
+	    return 0;
 
-		/* PUT_PREV_TASK, TASK_UPDATE && IRQ_UPDATE are left */
-		return irqtime || cpu_is_waiting_on_io(rq);
+	/* PUT_PREV_TASK, TASK_UPDATE && IRQ_UPDATE are left */
+	return irqtime || cpu_is_waiting_on_io(rq);
     }
 
     if (event == TASK_WAKE)
-		return 0;
+	return 0;
 
     if (event == PUT_PREV_TASK || event == IRQ_UPDATE ||
 		     event == TASK_UPDATE)
-		return 1;
+	return 1;
 
     /* Only TASK_MIGRATE && PICK_NEXT_TASK left */
     return walt_freq_account_wait_time;
@@ -345,193 +345,193 @@ static void update_cpu_busy_time(struct task_struct *p, struct rq *rq,
 
     new_window = mark_start < window_start;
     if (new_window) {
-		nr_full_windows = div64_u64((window_start - mark_start),
+	nr_full_windows = div64_u64((window_start - mark_start),
 			window_size);
-		if (p->ravg.active_windows < USHRT_MAX)
-		    p->ravg.active_windows++;
+	if (p->ravg.active_windows < USHRT_MAX)
+	    p->ravg.active_windows++;
     }
 
     /* Handle per-task window rollover. We don't care about the idle
      * task or exiting tasks. */
     if (new_window && !is_idle_task(p) && !exiting_task(p)) {
-		u32 curr_window = 0;
+	u32 curr_window = 0;
 
-		if (!nr_full_windows)
-		    curr_window = p->ravg.curr_window;
+	if (!nr_full_windows)
+	    curr_window = p->ravg.curr_window;
 
-		p->ravg.prev_window = curr_window;
-		p->ravg.curr_window = 0;
+	p->ravg.prev_window = curr_window;
+	p->ravg.curr_window = 0;
     }
 
     if (!account_busy_for_cpu_time(rq, p, irqtime, event)) {
-		/* account_busy_for_cpu_time() = 0, so no update to the
-		 * task's current window needs to be made. This could be
-		 * for example
-		 *
-		 *   - a wakeup event on a task within the current
-		 *     window (!new_window below, no action required),
-		 *   - switching to a new task from idle (PICK_NEXT_TASK)
-		 *     in a new window where irqtime is 0 and we aren't
-		 *     waiting on IO */
+	/* account_busy_for_cpu_time() = 0, so no update to the
+	 * task's current window needs to be made. This could be
+	 * for example
+	 *
+	 *   - a wakeup event on a task within the current
+	 *     window (!new_window below, no action required),
+	 *   - switching to a new task from idle (PICK_NEXT_TASK)
+	 *     in a new window where irqtime is 0 and we aren't
+	 *     waiting on IO */
 
-		if (!new_window)
-		    return;
+	if (!new_window)
+	    return;
 
-		/* A new window has started. The RQ demand must be rolled
-		 * over if p is the current task. */
-		if (p_is_curr_task) {
-		    u64 prev_sum = 0;
+	/* A new window has started. The RQ demand must be rolled
+	 * over if p is the current task. */
+	if (p_is_curr_task) {
+	    u64 prev_sum = 0;
 
-		    /* p is either idle task or an exiting task */
-		    if (!nr_full_windows) {
-			prev_sum = rq->curr_runnable_sum;
-		    }
+	    /* p is either idle task or an exiting task */
+	    if (!nr_full_windows) {
+		prev_sum = rq->curr_runnable_sum;
+	    }
 
-		    rq->prev_runnable_sum = prev_sum;
-		    rq->curr_runnable_sum = 0;
-		}
+	    rq->prev_runnable_sum = prev_sum;
+	    rq->curr_runnable_sum = 0;
+	}
 
-		return;
+	return;
     }
 
     if (!new_window) {
-		/* account_busy_for_cpu_time() = 1 so busy time needs
-		 * to be accounted to the current window. No rollover
-		 * since we didn't start a new window. An example of this is
-		 * when a task starts execution and then sleeps within the
-		 * same window. */
+	/* account_busy_for_cpu_time() = 1 so busy time needs
+	 * to be accounted to the current window. No rollover
+	 * since we didn't start a new window. An example of this is
+	 * when a task starts execution and then sleeps within the
+	 * same window. */
 
-		if (!irqtime || !is_idle_task(p) || cpu_is_waiting_on_io(rq))
-		    delta = wallclock - mark_start;
-		else
-		    delta = irqtime;
-		delta = scale_exec_time(delta, rq);
-		rq->curr_runnable_sum += delta;
-		if (!is_idle_task(p) && !exiting_task(p))
-		    p->ravg.curr_window += delta;
+	if (!irqtime || !is_idle_task(p) || cpu_is_waiting_on_io(rq))
+	    delta = wallclock - mark_start;
+	else
+	    delta = irqtime;
+	delta = scale_exec_time(delta, rq);
+	rq->curr_runnable_sum += delta;
+	if (!is_idle_task(p) && !exiting_task(p))
+	    p->ravg.curr_window += delta;
 
-		return;
+	return;
     }
 
     if (!p_is_curr_task) {
-		/* account_busy_for_cpu_time() = 1 so busy time needs
-		 * to be accounted to the current window. A new window
-		 * has also started, but p is not the current task, so the
-		 * window is not rolled over - just split up and account
-		 * as necessary into curr and prev. The window is only
-		 * rolled over when a new window is processed for the current
-		 * task.
-		 *
-		 * Irqtime can't be accounted by a task that isn't the
-		 * currently running task. */
+	/* account_busy_for_cpu_time() = 1 so busy time needs
+	 * to be accounted to the current window. A new window
+	 * has also started, but p is not the current task, so the
+	 * window is not rolled over - just split up and account
+	 * as necessary into curr and prev. The window is only
+	 * rolled over when a new window is processed for the current
+	 * task.
+	 *
+	 * Irqtime can't be accounted by a task that isn't the
+	 * currently running task. */
 
-		if (!nr_full_windows) {
-		    /* A full window hasn't elapsed, account partial
-		     * contribution to previous completed window. */
-		    delta = scale_exec_time(window_start - mark_start, rq);
-		    if (!exiting_task(p))
-			p->ravg.prev_window += delta;
-		} else {
-		    /* Since at least one full window has elapsed,
-		     * the contribution to the previous window is the
-		     * full window (window_size). */
-		    delta = scale_exec_time(window_size, rq);
-		    if (!exiting_task(p))
-			p->ravg.prev_window = delta;
-		}
-		rq->prev_runnable_sum += delta;
+	if (!nr_full_windows) {
+	    /* A full window hasn't elapsed, account partial
+	     * contribution to previous completed window. */
+	    delta = scale_exec_time(window_start - mark_start, rq);
+	    if (!exiting_task(p))
+		p->ravg.prev_window += delta;
+	} else {
+	    /* Since at least one full window has elapsed,
+	     * the contribution to the previous window is the
+	     * full window (window_size). */
+	    delta = scale_exec_time(window_size, rq);
+	    if (!exiting_task(p))
+		p->ravg.prev_window = delta;
+	}
+	rq->prev_runnable_sum += delta;
 
-		/* Account piece of busy time in the current window. */
-		delta = scale_exec_time(wallclock - window_start, rq);
-		rq->curr_runnable_sum += delta;
-		if (!exiting_task(p))
-		    p->ravg.curr_window = delta;
+	/* Account piece of busy time in the current window. */
+	delta = scale_exec_time(wallclock - window_start, rq);
+	rq->curr_runnable_sum += delta;
+	if (!exiting_task(p))
+	    p->ravg.curr_window = delta;
 
-		return;
+	return;
     }
 
     if (!irqtime || !is_idle_task(p) || cpu_is_waiting_on_io(rq)) {
-		/* account_busy_for_cpu_time() = 1 so busy time needs
-		 * to be accounted to the current window. A new window
-		 * has started and p is the current task so rollover is
-		 * needed. If any of these three above conditions are true
-		 * then this busy time can't be accounted as irqtime.
-		 *
-		 * Busy time for the idle task or exiting tasks need not
-		 * be accounted.
-		 *
-		 * An example of this would be a task that starts execution
-		 * and then sleeps once a new window has begun. */
+	/* account_busy_for_cpu_time() = 1 so busy time needs
+	 * to be accounted to the current window. A new window
+	 * has started and p is the current task so rollover is
+	 * needed. If any of these three above conditions are true
+	 * then this busy time can't be accounted as irqtime.
+	 *
+	 * Busy time for the idle task or exiting tasks need not
+	 * be accounted.
+	 *
+	 * An example of this would be a task that starts execution
+	 * and then sleeps once a new window has begun. */
 
-		if (!nr_full_windows) {
-		    /* A full window hasn't elapsed, account partial
-		     * contribution to previous completed window. */
-		    delta = scale_exec_time(window_start - mark_start, rq);
-		    if (!is_idle_task(p) && !exiting_task(p))
-			p->ravg.prev_window += delta;
+	if (!nr_full_windows) {
+	    /* A full window hasn't elapsed, account partial
+	     * contribution to previous completed window. */
+	    delta = scale_exec_time(window_start - mark_start, rq);
+	    if (!is_idle_task(p) && !exiting_task(p))
+		p->ravg.prev_window += delta;
 
-		    delta += rq->curr_runnable_sum;
-		} else {
-		    /* Since at least one full window has elapsed,
-		     * the contribution to the previous window is the
-		     * full window (window_size). */
-		    delta = scale_exec_time(window_size, rq);
-		    if (!is_idle_task(p) && !exiting_task(p))
-				p->ravg.prev_window = delta;
+	    delta += rq->curr_runnable_sum;
+	} else {
+	    /* Since at least one full window has elapsed,
+	     * the contribution to the previous window is the
+	     * full window (window_size). */
+	    delta = scale_exec_time(window_size, rq);
+	    if (!is_idle_task(p) && !exiting_task(p))
+		p->ravg.prev_window = delta;
 
-		}
-		/*
-		 * Rollover for normal runnable sum is done here by overwriting
-		 * the values in prev_runnable_sum and curr_runnable_sum.
-		 * Rollover for new task runnable sum has completed by previous
-		 * if-else statement.
-		 */
-		rq->prev_runnable_sum = delta;
+	}
+	/*
+	 * Rollover for normal runnable sum is done here by overwriting
+	 * the values in prev_runnable_sum and curr_runnable_sum.
+	 * Rollover for new task runnable sum has completed by previous
+	 * if-else statement.
+	 */
+	rq->prev_runnable_sum = delta;
 
-		/* Account piece of busy time in the current window. */
-		delta = scale_exec_time(wallclock - window_start, rq);
-		rq->curr_runnable_sum = delta;
-		if (!is_idle_task(p) && !exiting_task(p))
-		    p->ravg.curr_window = delta;
+	/* Account piece of busy time in the current window. */
+	delta = scale_exec_time(wallclock - window_start, rq);
+	rq->curr_runnable_sum = delta;
+	if (!is_idle_task(p) && !exiting_task(p))
+	    p->ravg.curr_window = delta;
 
-		return;
+	return;
     }
 
     if (irqtime) {
-		/* account_busy_for_cpu_time() = 1 so busy time needs
-		 * to be accounted to the current window. A new window
-		 * has started and p is the current task so rollover is
-		 * needed. The current task must be the idle task because
-		 * irqtime is not accounted for any other task.
-		 *
-		 * Irqtime will be accounted each time we process IRQ activity
-		 * after a period of idleness, so we know the IRQ busy time
-		 * started at wallclock - irqtime. */
+	/* account_busy_for_cpu_time() = 1 so busy time needs
+	 * to be accounted to the current window. A new window
+	 * has started and p is the current task so rollover is
+	 * needed. The current task must be the idle task because
+	 * irqtime is not accounted for any other task.
+	 *
+	 * Irqtime will be accounted each time we process IRQ activity
+	 * after a period of idleness, so we know the IRQ busy time
+	 * started at wallclock - irqtime. */
 
-		BUG_ON(!is_idle_task(p));
-		mark_start = wallclock - irqtime;
+	BUG_ON(!is_idle_task(p));
+	mark_start = wallclock - irqtime;
 
-		/* Roll window over. If IRQ busy time was just in the current
-		 * window then that is all that need be accounted. */
-		rq->prev_runnable_sum = rq->curr_runnable_sum;
-		if (mark_start > window_start) {
-		    rq->curr_runnable_sum = scale_exec_time(irqtime, rq);
-		    return;
-		}
+	/* Roll window over. If IRQ busy time was just in the current
+	 * window then that is all that need be accounted. */
+	rq->prev_runnable_sum = rq->curr_runnable_sum;
+	if (mark_start > window_start) {
+	    rq->curr_runnable_sum = scale_exec_time(irqtime, rq);
+	    return;
+	}
 
-		/* The IRQ busy time spanned multiple windows. Process the
-		 * busy time preceding the current window start first. */
-		delta = window_start - mark_start;
-		if (delta > window_size)
-		    delta = window_size;
-		delta = scale_exec_time(delta, rq);
-		rq->prev_runnable_sum += delta;
+	/* The IRQ busy time spanned multiple windows. Process the
+	 * busy time preceding the current window start first. */
+	delta = window_start - mark_start;
+	if (delta > window_size)
+	    delta = window_size;
+	delta = scale_exec_time(delta, rq);
+	rq->prev_runnable_sum += delta;
 
-		/* Process the remaining IRQ busy time in the current window. */
-		delta = wallclock - window_start;
-		rq->curr_runnable_sum = scale_exec_time(delta, rq);
+	/* Process the remaining IRQ busy time in the current window. */
+	delta = wallclock - window_start;
+	rq->curr_runnable_sum = scale_exec_time(delta, rq);
 
-		return;
+	return;
     }
 
     BUG();
@@ -542,7 +542,7 @@ static int account_busy_for_task_demand(struct task_struct *p, int event)
     /* No need to bother updating task demand for exiting tasks
      * or the idle task. */
     if (exiting_task(p) || is_idle_task(p))
-		return 0;
+	return 0;
 
     /* When a task is waking up it is completing a segment of non-busy
      * time. Likewise, if wait time is not treated as busy time, then
@@ -550,7 +550,7 @@ static int account_busy_for_task_demand(struct task_struct *p, int event)
      * is completing a segment of non-busy time. */
     if (event == TASK_WAKE || (!walt_account_wait_time &&
 	     (event == PICK_NEXT_TASK || event == TASK_MIGRATE)))
-		return 0;
+	return 0;
 
     return 1;
 }
@@ -571,7 +571,7 @@ static void update_history(struct rq *rq, struct task_struct *p,
 
 	/* Ignore windows where task had no activity */
 	if (!runtime || is_idle_task(p) || exiting_task(p) || !samples)
-		goto done;
+			goto done;
 
 	/* Push new 'runtime' value onto stack */
 	widx = walt_ravg_hist_size - 1;
@@ -636,7 +636,7 @@ static void add_to_task_demand(struct rq *rq, struct task_struct *p,
     delta = scale_exec_time(delta, rq);
     p->ravg.sum += delta;
     if (unlikely(p->ravg.sum > walt_ravg_window))
-		p->ravg.sum = walt_ravg_window;
+	p->ravg.sum = walt_ravg_window;
 }
 
 /*
@@ -699,22 +699,22 @@ static void update_task_demand(struct task_struct *p, struct rq *rq,
 
     new_window = mark_start < window_start;
     if (!account_busy_for_task_demand(p, event)) {
-		if (new_window)
-		    /* If the time accounted isn't being accounted as
-		     * busy time, and a new window started, only the
-		     * previous window need be closed out with the
-		     * pre-existing demand. Multiple windows may have
-		     * elapsed, but since empty windows are dropped,
-		     * it is not necessary to account those. */
-		    update_history(rq, p, p->ravg.sum, 1, event);
-		return;
+	if (new_window)
+	    /* If the time accounted isn't being accounted as
+	     * busy time, and a new window started, only the
+	     * previous window need be closed out with the
+	     * pre-existing demand. Multiple windows may have
+	     * elapsed, but since empty windows are dropped,
+	     * it is not necessary to account those. */
+	    update_history(rq, p, p->ravg.sum, 1, event);
+	return;
     }
 
     if (!new_window) {
-		/* The simple case - busy time contained within the existing
-		 * window. */
-		add_to_task_demand(rq, p, wallclock - mark_start);
-		return;
+	/* The simple case - busy time contained within the existing
+	 * window. */
+	add_to_task_demand(rq, p, wallclock - mark_start);
+	return;
     }
 
     /* Busy time spans at least two windows. Temporarily rewind
@@ -729,7 +729,7 @@ static void update_task_demand(struct task_struct *p, struct rq *rq,
     /* Push new sample(s) into task's demand history */
     update_history(rq, p, p->ravg.sum, 1, event);
     if (nr_full_windows)
-		update_history(rq, p, scale_exec_time(window_size, rq),
+	update_history(rq, p, scale_exec_time(window_size, rq),
 	           nr_full_windows, event);
 
     /* Roll window_start back to current to process any remainder
@@ -746,14 +746,14 @@ void walt_update_task_ravg(struct task_struct *p, struct rq *rq,
          int event, u64 wallclock, u64 irqtime)
 {
     if (walt_disabled || !rq->window_start)
-		return;
+	return;
 
     lockdep_assert_held(&rq->lock);
 
     update_window_start(rq, wallclock);
 
     if (!p->ravg.mark_start)
-		goto done;
+	goto done;
 
     update_task_demand(p, rq, event, wallclock);
     update_cpu_busy_time(p, rq, event, wallclock, irqtime);
@@ -769,7 +769,7 @@ static void reset_task_stats(struct task_struct *p)
     u32 sum = 0;
 
     if (exiting_task(p))
-		sum = EXITING_TASK_MARKER;
+	sum = EXITING_TASK_MARKER;
 
     memset(&p->ravg, 0, sizeof(struct ravg));
     /* Retain EXITING_TASK marker */
@@ -782,8 +782,8 @@ void walt_mark_task_starting(struct task_struct *p)
     struct rq *rq = task_rq(p);
 
     if (!rq->window_start) {
-		reset_task_stats(p);
-		return;
+	reset_task_stats(p);
+	return;
     }
 
 	wallclock = walt_ktime_clock();
@@ -809,13 +809,13 @@ void walt_set_window_start(struct rq *rq)
 	}
 
     if (cpu == sync_cpu) {
-		rq->window_start = ktime_get_ns();
+	rq->window_start = ktime_get_ns();
     } else {
-		raw_spin_unlock(&rq->lock);
-		double_rq_lock(rq, sync_rq);
-		rq->window_start = cpu_rq(sync_cpu)->window_start;
-		rq->curr_runnable_sum = rq->prev_runnable_sum = 0;
-		raw_spin_unlock(&sync_rq->lock);
+	raw_spin_unlock(&rq->lock);
+	double_rq_lock(rq, sync_rq);
+	rq->window_start = cpu_rq(sync_cpu)->window_start;
+	rq->curr_runnable_sum = rq->prev_runnable_sum = 0;
+	raw_spin_unlock(&sync_rq->lock);
     }
 
     rq->curr->ravg.mark_start = rq->window_start;
@@ -824,7 +824,7 @@ void walt_set_window_start(struct rq *rq)
 void walt_migrate_sync_cpu(int cpu)
 {
     if (cpu == sync_cpu)
-		sync_cpu = smp_processor_id();
+	sync_cpu = smp_processor_id();
 }
 
 void walt_fixup_busy_time(struct task_struct *p, int new_cpu)
@@ -834,14 +834,14 @@ void walt_fixup_busy_time(struct task_struct *p, int new_cpu)
     u64 wallclock;
 
     if (!p->on_rq && p->state != TASK_WAKING)
-		return;
+	return;
 
     if (exiting_task(p)) {
-		return;
+	return;
     }
 
     if (p->state == TASK_WAKING)
-		double_rq_lock(src_rq, dest_rq);
+	double_rq_lock(src_rq, dest_rq);
 
 	wallclock = walt_ktime_clock();
 
@@ -869,8 +869,8 @@ void walt_fixup_busy_time(struct task_struct *p, int new_cpu)
 	}
 
     if (p->ravg.prev_window) {
-		src_rq->prev_runnable_sum -= p->ravg.prev_window;
-		dest_rq->prev_runnable_sum += p->ravg.prev_window;
+	src_rq->prev_runnable_sum -= p->ravg.prev_window;
+	dest_rq->prev_runnable_sum += p->ravg.prev_window;
     }
 
 	if ((s64)src_rq->prev_runnable_sum < 0) {
@@ -886,7 +886,7 @@ void walt_fixup_busy_time(struct task_struct *p, int new_cpu)
     trace_walt_migration_update_sum(dest_rq, p);
 
     if (p->state == TASK_WAKING)
-		double_rq_unlock(src_rq, dest_rq);
+	double_rq_unlock(src_rq, dest_rq);
 }
 
 void walt_init_new_task_load(struct task_struct *p)
@@ -901,7 +901,7 @@ void walt_init_new_task_load(struct task_struct *p)
     memset(&p->ravg, 0, sizeof(struct ravg));
 
     if (init_load_pct) {
-		init_load_windows = div64_u64((u64)init_load_pct *
+	init_load_windows = div64_u64((u64)init_load_pct *
 	      (u64)walt_ravg_window, 100);
     }
 

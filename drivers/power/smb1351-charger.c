@@ -3140,7 +3140,7 @@ static int smb1351_usbin_ov_handler(struct smb1351_charger *chip, u8 status)
 	struct power_supply *parallel_psy = smb1351_get_parallel_slave(chip);
 	int health;
 	int rc;
-	u8 reg = 0;
+	u8 reg;
 
 	pr_debug("enter, status = %d\n", !!status);
 	rc = smb1351_read_reg(chip, IRQ_E_REG, &reg);

@@ -1206,7 +1206,7 @@ EXPORT_SYMBOL(scm_restore_sec_cfg);
 bool scm_is_secure_device(void)
 {
 	struct scm_desc desc = {0};
-	int ret = 0, resp = 0;
+	int ret = 0, resp;
 
 	desc.args[0] = 0;
 	desc.arginfo = 0;
