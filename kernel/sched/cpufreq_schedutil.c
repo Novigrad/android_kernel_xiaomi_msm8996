@@ -27,6 +27,7 @@ unsigned long boosted_cpu_util(int cpu);
 #define cpufreq_enable_fast_switch(x)
 #define cpufreq_disable_fast_switch(x)
 #define LATENCY_MULTIPLIER			(1000)
+#define SUGOV_KTHREAD_PRIORITY	50
 
 struct sugov_tunables {
 	struct gov_attr_set attr_set;
@@ -698,7 +699,7 @@ static void store_tunables_data(struct sugov_tunables *tunables,
 		return;
 	ptunables->up_rate_limit_us = tunables->up_rate_limit_us;
 	ptunables->down_rate_limit_us = tunables->down_rate_limit_us;
-	ptunables->iowait_boost_enable = tunables->iowait_boost_enable;
+	ptunables->iowait_boost_enable = tunables->iowait_boost_enable; 
 
 	pr_debug("tunables data saved for cpu[%u]\n", cpu);
 }
