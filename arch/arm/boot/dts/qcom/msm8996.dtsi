@@ -1881,8 +1881,8 @@
 		reg = <0x9830000 0x1000>;
 		reg-names = "wdt-base";
 		interrupts = <0 28 0>, <0 29 0>;
-		qcom,bark-time = <20000>;
-		qcom,pet-time = <15000>;
+		qcom,bark-time = <11000>;
+		qcom,pet-time = <10000>;
 		qcom,wakeup-enable;
 	};
 
@@ -1934,12 +1934,6 @@
 		compatible = "qcom,jtag-fuse-v3";
 		reg = <0x7602c 0xc>;
 		reg-names = "fuse-base";
-	};
-
-	sn_fuse: snfuse@0x74138 {
-	    compatible = "qcom,sn-fuse";
-	    reg = <0x74138 0x4>;
-	    reg-names = "sn-base";
 	};
 
 	rpm_bus: qcom,rpm-smd {
@@ -2858,14 +2852,6 @@
 			qcom,sensor-name = "tsens_tz_sensor20";
 			qcom,scaling-factor = <10>;
 		};
-		sensor_information36: qcom,sensor-information-36 {
-			qcom,sensor-type = "adc";
-			qcom,sensor-name = "xo_therm_buf";
-		};
-		sensor_information37: qcom,sensor-information-37 {
-			qcom,sensor-type = "adc";
-			qcom,sensor-name = "battery";
-		};
 	};
 
 	mitigation_profile0: qcom,limit_info-0 {
@@ -3141,12 +3127,14 @@
 		compatible = "qcom,msm-pcm-dsp";
 		qcom,msm-pcm-dsp-id = <1>;
 		qcom,msm-pcm-low-latency;
+		qcom,latency-level = "regular";
 	};
 
 	pcm2: qcom,msm-ultra-low-latency {
 		compatible = "qcom,msm-pcm-dsp";
 		qcom,msm-pcm-dsp-id = <2>;
 		qcom,msm-pcm-low-latency;
+		qcom,latency-level = "ultra";
 	};
 
 	routing: qcom,msm-pcm-routing {
@@ -3649,7 +3637,7 @@
 		compatible = "qcom,msm-pcm-hostless";
 	};
 
-	ssc_sensors: qcom,msm-ssc-sensors {
+	qcom,msm-ssc-sensors {
 		compatible = "qcom,msm-ssc-sensors";
 		status = "ok";
 	};

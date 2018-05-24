@@ -1,5 +1,4 @@
 /* Copyright (c) 2015, The Linux Foundation. All rights reserved.
- * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -20,7 +19,6 @@
 	dsi_jdi_fhd_r63452_xcmd: qcom,mdss_dsi_jdi_fhd_r63452_xcmd {
 		qcom,mdss-dsi-panel-name = "jdi fhd xcmd incell dsi panel";
 		qcom,mdss-dsi-panel-id = <0>;
-		qcom,mdss-dsi-panel-model = "JDI FHD R63452 CMD PANEL";
 		qcom,mdss-dsi-panel-sleepwrmod = <0>;
 		qcom,mdss-dsi-panel-type = "dsi_cmd_mode";
 		qcom,mdss-dsi-panel-framerate = <60>;
@@ -77,10 +75,6 @@
 				05 01 00 00 78 00 02 10 00];
 		qcom,mdss-dsi-on-command-state = "dsi_lp_mode";
 		qcom,mdss-dsi-off-command-state = "dsi_hs_mode";
-		qcom,mdss-dsi-displayoff-command = [05 01 00 00 20 00 02 28 00];
-		qcom,mdss-dsi-displayon-command = [05 01 00 00 20 00 02 29 00];
-		qcom,mdss-dsi-displayoff-command-state = "dsi_hs_mode";
-		qcom,mdss-dsi-displayon-command-state = "dsi_hs_mode";
 		qcom,mdss-dsi-h-sync-pulse = <0>;
 		qcom,mdss-dsi-traffic-mode = "burst_mode";
 		qcom,mdss-dsi-bllp-eof-power-mode;
@@ -108,89 +102,5 @@
 		qcom,mdss-dsi-te-dcs-command = <1>;
 		qcom,mdss-dsi-te-check-enable;
 		qcom,mdss-dsi-te-using-te-pin;
-		qcom,mdss-night-brightness = <7 25 43 61>;
-		qcom,mdss-panel-on-dimming-delay = <120>;
-		qcom,dispparam-enabled;
-		qcom,mdss-dsi-dispparam-cabcon-command = [
-			29 00 00 00 00 00 02 B0 04
-			39 00 00 00 00 00 02 55 83
-			29 00 00 00 00 00 08 BA AB 51 09 00 10 00 00
-			29 00 00 00 00 00 1A CE 55 40 4F B5 C0 C8 D5 DF E8 E9 EA EB EC ED EE EF FF 04 00 04 04 42 00 69 5A
-			29 00 00 00 00 00 0A F9 64 FF E0 BE 00 8D BF 80 00
-			29 01 00 00 00 00 02 B0 03
-			];
-		qcom,mdss-dsi-dispparam-cabcguion-command = [
-			39 01 00 00 01 00 02 55 01
-			];
-		qcom,mdss-dsi-dispparam-cabcstillon-command = [
-			39 01 00 00 01 00 02 55 02
-			];
-		qcom,mdss-dsi-dispparam-cabcmovieon-command = [
-			39 01 00 00 01 00 02 55 03
-			];
-		qcom,mdss-dsi-dispparam-cabcoff-command = [
-			39 01 00 00 01 00 02 55 00
-			];
-		qcom,mdss-dsi-dispparam-dimmingon-command = [
-			39 01 00 00 01 00 02 53 2C
-			];
-		qcom,mdss-dsi-dispparam-idleon-command = [
-			39 01 00 00 01 00 02 39 00
-			];
-		qcom,mdss-dsi-dispparam-idleoff-command = [
-			39 01 00 00 01 00 02 38 00
-			];
-		qcom,mdss-dsi-dispparam-warm-command = [
-			29 00 00 00 00 00 02 B0 04
-			39 00 00 00 00 00 02 84 80
-			29 00 00 00 00 00 32 C8 01 00 06 02 04 ED 00 00 05 FE FE FC 00 00 05 FE FA DE 00 00 06 02 04 CB 00 05 FE FE FC 00 05 FE FA F1 00 06 02 04 FC 00 05 FE FE FB 00 05 FE FA B5
-			29 00 00 00 00 00 02 CA 1C
-			29 01 00 00 00 00 02 B0 03
-			];
-		qcom,mdss-dsi-dispparam-warm-command-state = "dsi_hs_mode";
-		qcom,mdss-dsi-dispparam-cold-command = [
-			29 00 00 00 00 00 02 B0 04
-			39 00 00 00 00 00 02 84 7F
-			29 00 00 00 00 00 32 C8 01 00 06 02 04 ED 00 00 05 FE FE FC 00 00 05 FE FA DE 00 00 06 02 04 CB 00 05 FE FE FC 00 05 FE FA F1 00 06 02 04 FC 00 05 FE FE FB 00 05 FE FA B5
-			29 00 00 00 00 00 02 CA 1C
-			29 01 00 00 00 00 02 B0 03
-			];
-		qcom,mdss-dsi-dispparam-cold-command-state = "dsi_hs_mode";
-		qcom,mdss-dsi-dispparam-default-command = [
-			29 00 00 00 00 00 02 B0 04
-			39 00 00 00 00 00 02 84 00
-			29 00 00 00 00 00 02 C8 11
-			29 00 00 00 00 00 02 CA 1C
-			29 01 00 00 00 00 02 B0 03
-			];
-		qcom,mdss-dsi-dispparam-default-command-state = "dsi_hs_mode";
-
-		qcom,mdss-dsi-dispparam-normal1-command = [
-			29 00 00 00 00 00 02 B0 00
-			29 00 00 00 00 00 04 D3 DD 53 53
-			39 00 00 00 00 00 02 84 00
-			29 00 00 00 00 00 1F C7 00 16 21 2D 3C 4A 53 61 45 4D 58 63 6B 72 7F 00 16 21 2D 3C 4A 53 61 45 4D 58 63 6B 72 7F
-			29 00 00 00 00 00 32 C8 01 00 06 02 04 ED 00 00 05 FE FE FC 00 00 05 FE FA DE 00 00 06 02 04 CB 00 05 FE FE FC 00 05 FE FA F1 00 06 02 04 FC 00 05 FE FE FB 00 05 FE FA B5
-			29 00 00 00 00 00 02 CA 1C
-			29 01 00 00 00 00 02 B0 03
-			];
-		qcom,mdss-dsi-dispparam-normal1-command-state = "dsi_hs_mode";
-		qcom,mdss-dsi-dispparam-normal2-command = [
-			29 00 00 00 00 00 02 B0 04
-			39 00 00 00 00 00 02 84 00
-			29 00 00 00 00 00 02 C8 11
-			29 00 00 00 00 00 02 CA 1C
-			29 01 00 00 00 00 02 B0 03
-			];
-		qcom,mdss-dsi-dispparam-normal2-command-state = "dsi_hs_mode";
-		qcom,mdss-dsi-dispparam-srgb-command = [
-			05 01 00 00 05 00 02 11 00
-			29 00 00 00 00 00 02 B0 04
-			39 00 00 00 00 00 02 84 00
-			29 00 00 00 00 00 02 C8 00
-			29 00 00 00 00 00 2C CA 1D FC E2 92 00 ED F1 DB 00 D6 01 1F 00 74 00 EC EC 0F F7 FD 00 1A FF 00 00 F7 2E 1D FF 00 FF 00 7D F6 2D FF 00 00 FF 34 00 FF FF
-			29 01 00 00 00 00 02 B0 03
-			];
-		qcom,mdss-dsi-dispparam-srgb-command-state = "dsi_hs_mode";
 	};
 };
