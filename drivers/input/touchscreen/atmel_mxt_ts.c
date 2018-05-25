@@ -14,7 +14,6 @@
  */
 
 #include <linux/module.h>
-#include <linux/proc_fs.h>
 #include <linux/init.h>
 #include <linux/delay.h>
 #include <linux/firmware.h>
@@ -28,12 +27,14 @@
 #include <linux/gpio.h>
 #include <linux/string.h>
 #include <linux/of_gpio.h>
+#include <linux/hwinfo.h>
 #include <linux/power_supply.h>
 #ifdef CONFIG_FB
 #include <linux/notifier.h>
 #include <linux/fb.h>
 #endif
 #include <linux/proc_fs.h>
+#include <linux/input/touch_common_info.h>
 
 /* Version */
 #define MXT_VER_20		20
@@ -2581,6 +2582,7 @@ static int mxt_check_reg_init(struct mxt_data *data)
 	int ret;
 	const char *config_name = NULL;
 	bool is_recheck = false, use_default_cfg = false;
+	u8 *tp_maker = NULL;
 
 	if (data->firmware_updated)
 		use_default_cfg = true;
@@ -2653,6 +2655,26 @@ start:
 		} else {
 			dev_err(dev, "No lockdown info stored\n");
 		}
+	}
+
+	if (data->panel_id == 0x31)
+		update_hardware_info(TYPE_TP_MAKER, 1); /* Biel D1 */
+	else if (data->panel_id == 0x36)
+		update_hardware_info(TYPE_TP_MAKER, 3); /* TPK */
+	else if (data->panel_id == 0x35)
+		update_hardware_info(TYPE_TP_MAKER, 4); /* Biel TPB */
+	else if (data->panel_id == 0x38)
+		update_hardware_info(TYPE_TP_MAKER, 5); /* Sharp */
+	else if (data->panel_id == 0x34)
+		update_hardware_info(TYPE_TP_MAKER, 6); /* Ofilm */
+
+	tp_maker = kzalloc(20, GFP_KERNEL);
+	if (tp_maker == NULL)
+		dev_err(dev, "fail to alloc vendor name memory\n");
+	else {
+		strlcpy(tp_maker, update_hw_component_touch_module_info(data->lockdown_info[0]), 20);
+		kfree(tp_maker);
+		tp_maker = NULL;
 	}
 
 	config_name = mxt_get_config(data, use_default_cfg);
@@ -6873,6 +6895,8 @@ static int mxt_probe(struct i2c_client *client,
 	mxt_debugfs_init(data);
 
 	normal_mode_reg_save(data);
+
+	update_hardware_info(TYPE_TOUCH, 2);
 
 	data->finish_init = 1;
 
