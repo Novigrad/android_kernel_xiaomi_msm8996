@@ -10,7 +10,6 @@ typedef struct {
 	unsigned int touch_info:4;
 	unsigned int soc_info:4;
 	unsigned int ddr_info:4;
-	unsigned int emmc_info:16;
 	unsigned int cpu_info:2;
 	unsigned int pmic_info:2;
 	unsigned int panel_info:4;
@@ -50,18 +49,6 @@ extern unsigned int get_hw_version_devid(void);
 
 static int hwinfo_proc_show(struct seq_file *m, void *v)
 {
-	switch (hw_info.emmc_info) {
-	case 0x0198:
-		seq_printf(m, "UFS: Toshiba\n");
-		break;
-	case 0x01ce:
-		seq_printf(m, "UFS: Samsung\n");
-		break;
-	default:
-		seq_printf(m, "UFS: Unknown %x\n", hw_info.emmc_info);
-		break;
-	}
-
 	switch (hw_info.ddr_info) {
 	case 0x01:
 		seq_printf(m, "DDR: Samsung\n"); /* 0000 0001B */
@@ -235,9 +222,6 @@ void update_hardware_info(unsigned int type, unsigned int value)
 	case TYPE_DDR:
 		hw_info.ddr_info = value;
 		break;
-	case TYPE_EMMC:
-		hw_info.emmc_info = value;
-		break;
 	case TYPE_CPU:
 		hw_info.cpu_info = value;
 		break;
@@ -268,9 +252,6 @@ unsigned int get_hardware_info(unsigned int type)
 		break;
 	case TYPE_DDR:
 		ret = hw_info.ddr_info;
-		break;
-	case TYPE_EMMC:
-		ret = hw_info.emmc_info;
 		break;
 	case TYPE_CPU:
 		ret = hw_info.cpu_info;

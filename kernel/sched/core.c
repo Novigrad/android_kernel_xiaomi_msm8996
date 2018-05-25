@@ -1737,6 +1737,10 @@ static inline
 int select_task_rq(struct task_struct *p, int cpu, int sd_flags, int wake_flags,
 		   int sibling_count_hint)
 {
+#ifdef CONFIG_CPUSET_EXCLUSIVE_IND
+	cpuset_mask_cpu_exclusive(p);
+#endif
+
 	lockdep_assert_held(&p->pi_lock);
 
 	if (p->nr_cpus_allowed > 1)
