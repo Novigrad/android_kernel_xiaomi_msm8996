@@ -1,4 +1,5 @@
 /* Copyright (c) 2014-2018, The Linux Foundation. All rights reserved.
+ * Copyright (C) 2018 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License version 2 and
@@ -35,9 +36,11 @@
 		pci-domain0 = &pcie0;
 		pci-domain1 = &pcie1;
 		pci-domain2 = &pcie2;
+		i2c3 = &i2c_3;
 		i2c6 = &i2c_6;
 		i2c7 = &i2c_7;
 		i2c8 = &i2c_8;
+		i2c9 = &i2c_9;
 		i2c12 = &i2c_12;
 		spi0 = &spi_0;
 		mhi_rmnet0 = &mhi_rmnet_0;
@@ -368,6 +371,11 @@
 			reg = <0 0xb1c00000 0 0x23ff000>;
 			label = "cont_splash_mem_hdmi";
 		};
+
+		ocimem_log: ocimem_log@0xb4000000 {
+			reg = <0 0xB4000000 0 0x100000>;
+			label = "ocimem_log";
+		};
 	};
 };
 
@@ -510,6 +518,29 @@
 		qcom,summing-threshold = <0x10>;
 	};
 
+	i2c_3: i2c@7577000 { /* BLSP1 QUP3 */
+		compatible = "qcom,i2c-msm-v2";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg = <0x7577000  0x1000>;
+		reg-names = "qup_phys_addr";
+		interrupt-names = "qup_irq";
+		interrupts = <0 97 0>;
+
+		dmas = <&dma_blsp1 16 32 0x20000020 0x20>,
+			<&dma_blsp1 17 32 0x20000020 0x20>;
+		dma-names = "tx", "rx";
+		qcom,master-id = <86>;
+		qcom,clk-freq-out = <400000>;
+		qcom,clk-freq-in  = <19200000>;
+		clock-names = "iface_clk", "core_clk";
+		clocks = <&clock_gcc clk_gcc_blsp1_ahb_clk>,
+			 <&clock_gcc clk_gcc_blsp1_qup3_i2c_apps_clk>;
+		pinctrl-names = "i2c_active", "i2c_sleep";
+		pinctrl-0 = <&i2c_3_active>;
+		pinctrl-1 = <&i2c_3_sleep>;
+	};
+
 	dma_blsp2: qcom,sps-dma@0x7584000{ /* BLSP2 */
 		#dma-cells = <4>;
 		compatible = "qcom,sps-dma";
@@ -582,6 +613,31 @@
 		pinctrl-names = "i2c_active", "i2c_sleep";
 		pinctrl-0 = <&i2c_8_active>;
 		pinctrl-1 = <&i2c_8_sleep>;
+	};
+
+	i2c_9: i2c@75b7000 { /* BLSP2 QUP3 */
+		compatible = "qcom,i2c-msm-v2";
+		#address-cells = <1>;
+		#size-cells = <0>;
+		reg-names = "qup_phys_addr";
+		reg = <0x75b7000 0x1000>;
+		interrupt-names = "qup_irq";
+		interrupts = <0 103 0>;
+		dmas = <&dma_blsp2 16 32 0x20000020 0x20>,
+			<&dma_blsp2 17 32 0x20000020 0x20>;
+		dma-names = "tx", "rx";
+		qcom,disable-dma;
+		qcom,master-id = <84>;
+		qcom,clk-freq-out = <400000>;
+		qcom,clk-freq-in  = <19200000>;
+		qcom,noise-rjct-scl = <3>;
+		qcom,noise-rjct-sda = <3>;
+		clock-names = "iface_clk", "core_clk";
+		clocks = <&clock_gcc clk_gcc_blsp2_ahb_clk>,
+			<&clock_gcc clk_gcc_blsp2_qup3_i2c_apps_clk>;
+		pinctrl-names = "i2c_active", "i2c_sleep";
+		pinctrl-0 = <&i2c_9_active>;
+		pinctrl-1 = <&i2c_9_sleep>;
 	};
 
 	blsp1_uart2: uart@07570000 { /* BLSP1 UART2 */
@@ -1043,10 +1099,10 @@
 						   "cdc-vdd-rx-h",
 						   "cdc-vddpx-1";
 
-			qcom,cdc-micbias1-mv = <1800>;
+			qcom,cdc-micbias1-mv = <2750>;
 			qcom,cdc-micbias2-mv = <1800>;
-			qcom,cdc-micbias3-mv = <1800>;
-			qcom,cdc-micbias4-mv = <1800>;
+			qcom,cdc-micbias3-mv = <2750>;
+			qcom,cdc-micbias4-mv = <2750>;
 
 			qcom,cdc-mclk-clk-rate = <9600000>;
 			qcom,cdc-slim-ifd = "tasha-slim-ifd";
@@ -1881,8 +1937,8 @@
 		reg = <0x9830000 0x1000>;
 		reg-names = "wdt-base";
 		interrupts = <0 28 0>, <0 29 0>;
-		qcom,bark-time = <11000>;
-		qcom,pet-time = <10000>;
+		qcom,bark-time = <20000>;
+		qcom,pet-time = <15000>;
 		qcom,wakeup-enable;
 	};
 
@@ -1934,6 +1990,12 @@
 		compatible = "qcom,jtag-fuse-v3";
 		reg = <0x7602c 0xc>;
 		reg-names = "fuse-base";
+	};
+
+	sn_fuse: snfuse@0x74138 {
+	    compatible = "qcom,sn-fuse";
+	    reg = <0x74138 0x4>;
+	    reg-names = "sn-base";
 	};
 
 	rpm_bus: qcom,rpm-smd {
@@ -2852,6 +2914,14 @@
 			qcom,sensor-name = "tsens_tz_sensor20";
 			qcom,scaling-factor = <10>;
 		};
+		sensor_information36: qcom,sensor-information-36 {
+			qcom,sensor-type = "adc";
+			qcom,sensor-name = "xo_therm_buf";
+		};
+		sensor_information37: qcom,sensor-information-37 {
+			qcom,sensor-type = "adc";
+			qcom,sensor-name = "battery";
+		};
 	};
 
 	mitigation_profile0: qcom,limit_info-0 {
@@ -3067,8 +3137,8 @@
 			"SpkrLeft IN", "SPK1 OUT",
 			"SpkrRight IN", "SPK2 OUT";
 
-		qcom,msm-mbhc-hphl-swh = <0>;
-		qcom,msm-mbhc-gnd-swh = <0>;
+		qcom,msm-mbhc-hphl-swh = <1>;
+		qcom,msm-mbhc-gnd-swh = <1>;
 		qcom,tasha-mclk-clk-freq = <9600000>;
 		asoc-platform = <&pcm0>, <&pcm1>, <&pcm2>, <&voip>, <&voice>,
 				<&loopback>, <&compress>, <&hostless>,
@@ -3127,14 +3197,12 @@
 		compatible = "qcom,msm-pcm-dsp";
 		qcom,msm-pcm-dsp-id = <1>;
 		qcom,msm-pcm-low-latency;
-		qcom,latency-level = "regular";
 	};
 
 	pcm2: qcom,msm-ultra-low-latency {
 		compatible = "qcom,msm-pcm-dsp";
 		qcom,msm-pcm-dsp-id = <2>;
 		qcom,msm-pcm-low-latency;
-		qcom,latency-level = "ultra";
 	};
 
 	routing: qcom,msm-pcm-routing {
@@ -3633,11 +3701,50 @@
 		};
 	};
 
+	qcom,msm-dai-mi2s {
+		compatible = "qcom,msm-dai-mi2s";
+		dai_pri_mi2s: qcom,msm-dai-q6-mi2s-prim {
+			compatible = "qcom,msm-dai-q6-mi2s";
+			qcom,msm-dai-q6-mi2s-dev-id = <0>;
+			qcom,msm-mi2s-rx-lines = <1>; /* SD0 (1 << 0) */
+			qcom,msm-mi2s-tx-lines = <2>; /* SD1 (1 << 1) */
+			qcom,msm-mi2s-slave = <0>;
+			qcom,msm-mi2s-ext-mclk = <0>;
+		};
+	};
+
+	qcom,msm-dai-mi2s {
+		compatible = "qcom,msm-dai-mi2s";
+		dai_sec_mi2s: qcom,msm-dai-q6-mi2s-sec {
+			compatible = "qcom,msm-dai-q6-mi2s";
+			qcom,msm-dai-q6-mi2s-dev-id = <1>;
+			qcom,msm-mi2s-rx-lines = <3>; /* SD0 (1 << 0) | SD1 (1 << 1) */
+			qcom,msm-mi2s-tx-lines = <0>; /* None */
+			qcom,msm-mi2s-slave = <1>;
+			qcom,msm-mi2s-ext-mclk = <0>;
+		};
+	};
+
+	qcom,msm-dai-mi2s {
+		compatible = "qcom,msm-dai-mi2s";
+		dai_quat_mi2s: qcom,msm-dai-q6-mi2s-quat {
+			compatible = "qcom,msm-dai-q6-mi2s";
+			qcom,msm-dai-q6-mi2s-dev-id = <3>;
+			qcom,msm-mi2s-rx-lines = <1>; /* SD0 (1 << 0) */
+			qcom,msm-mi2s-tx-lines = <2>; /* SD1 (1 << 1) */
+			qcom,msm-mi2s-slave = <0>;
+			qcom,msm-mi2s-ext-mclk = <0>;
+			pinctrl-names = "default", "idle";
+			pinctrl-0 = <&quat_mi2s_active &quat_mi2s_sd0_active &quat_mi2s_sd1_active>;
+			pinctrl-1 = <&quat_mi2s_sleep &quat_mi2s_sd0_sleep &quat_mi2s_sd1_sleep>;
+		};
+	};
+
 	hostless: qcom,msm-pcm-hostless {
 		compatible = "qcom,msm-pcm-hostless";
 	};
 
-	qcom,msm-ssc-sensors {
+	ssc_sensors: qcom,msm-ssc-sensors {
 		compatible = "qcom,msm-ssc-sensors";
 		status = "ok";
 	};
