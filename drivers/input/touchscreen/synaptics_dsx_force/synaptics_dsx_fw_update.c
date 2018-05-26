@@ -42,6 +42,8 @@
 #include <linux/platform_device.h>
 #include <linux/input/synaptics_dsx.h>
 #include "synaptics_dsx_core.h"
+#include <linux/hwinfo.h>
+#include <linux/input/touch_common_info.h>
 
 #define FW_IHEX_NAME "synaptics/startup_fw_update.bin"
 #define FW_IMAGE_NAME "synaptics/startup_fw_update.img"
@@ -2002,6 +2004,22 @@ static int fwu_read_f34_lockdown_data(void)
 			fwu->read_config_buf[8], fwu->read_config_buf[9],
 			fwu->read_config_buf[10], fwu->read_config_buf[11]);
 
+	if (rmi4_data->lockdown_info[0] == 0x31)
+		update_hardware_info(TYPE_TP_MAKER, 1); /* Biel D1 */
+	else if (rmi4_data->lockdown_info[0] == 0x35)
+		update_hardware_info(TYPE_TP_MAKER, 4); /* Biel TPB */
+	if (!fwu->hwinfo_acquired) {
+	tp_maker = kzalloc(20, GFP_KERNEL);
+		if (tp_maker == NULL)
+			dev_err(rmi4_data->pdev->dev.parent, "%s: Failed to alloc vendor name memory\n", __func__);
+		else {
+			strlcpy(tp_maker, update_hw_component_touch_module_info(rmi4_data->lockdown_info[0]), 20);
+			fwu->hwinfo_acquired = true;
+			kfree(tp_maker);
+			tp_maker = NULL;
+		}
+	}
+
 	return retval;
 }
 
@@ -2572,6 +2590,21 @@ static int fwu_read_f34_guest_serialization_partition(void)
 			fwu->read_config_buf[2], fwu->read_config_buf[3],
 			fwu->read_config_buf[4], fwu->read_config_buf[5],
 			fwu->read_config_buf[6], fwu->read_config_buf[7]);
+	if (rmi4_data->lockdown_info[0] == 0x31)
+		update_hardware_info(TYPE_TP_MAKER, 1); /* Biel D1 */
+	else if (rmi4_data->lockdown_info[0] == 0x35)
+		update_hardware_info(TYPE_TP_MAKER, 4); /* Biel TPB */
+	if (!fwu->hwinfo_acquired) {
+	tp_maker = kzalloc(20, GFP_KERNEL);
+		if (tp_maker == NULL)
+			dev_err(rmi4_data->pdev->dev.parent, "%s: Failed to alloc vendor name memory\n", __func__);
+		else {
+			strlcpy(tp_maker, update_hw_component_touch_module_info(rmi4_data->lockdown_info[0]), 20);
+			fwu->hwinfo_acquired = true;
+			kfree(tp_maker);
+			tp_maker = NULL;
+		}
+	}
 
 	return retval;
 }

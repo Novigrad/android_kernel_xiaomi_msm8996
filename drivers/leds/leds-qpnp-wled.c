@@ -1427,6 +1427,39 @@ static int qpnp_wled_config(struct qpnp_wled *wled)
 	return 0;
 }
 
+int qpnp_wled_cabc(struct led_classdev *led_cdev, bool enable)
+{
+	struct qpnp_wled *wled;
+	int rc = 0, i;
+	u8 reg = 0;
+
+	wled = container_of(led_cdev, struct qpnp_wled, cdev);
+	if (wled == NULL) {
+		pr_err("wled is null\n");
+		return -EPERM;
+	}
+	wled->en_cabc = enable;
+	for (i = 0; i < wled->num_strings; i++) {
+		/* CABC */
+		rc = qpnp_wled_read_reg(wled, &reg,
+				QPNP_WLED_CABC_REG(wled->sink_base,
+					wled->strings[i]));
+		if (rc < 0)
+			return rc;
+		reg &= QPNP_WLED_CABC_MASK;
+		reg |= (wled->en_cabc << QPNP_WLED_CABC_SHIFT);
+		rc = qpnp_wled_write_reg(wled, &reg,
+				QPNP_WLED_CABC_REG(wled->sink_base,
+					wled->strings[i]));
+		if (rc)
+			return rc;
+		pr_debug("%d en_cabc %d\n", i, wled->en_cabc);
+	}
+	return rc;
+}
+
+EXPORT_SYMBOL_GPL(qpnp_wled_cabc);
+
 /* parse wled dtsi parameters */
 static int qpnp_wled_parse_dt(struct qpnp_wled *wled)
 {

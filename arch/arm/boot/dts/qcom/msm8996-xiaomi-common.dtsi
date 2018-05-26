@@ -524,6 +524,11 @@
 					<5820000 6820000 550 650 650>,
 					<6820000 7820000 550 700 600>,
 					<7820000 8500000 550 700 550>;
+       qcom,override-usb-current;
+       qcom,stage-charge-threshold-mv = <4200>;
+       qcom,stage-charge-delta-mv = <50>;
+       qcom,float-voltage-comp = <16>;
+       qcom,float-voltage-comp-stage = <6>;
 };
 
 &i2c_7 {
@@ -540,12 +545,14 @@
 	qcom,battery-data = <&mtp_batterydata>;
 	qcom,ext-sense-type;
 	qcom,resume-soc-raw = <253>;
-	qcom,vbat-estimate-diff-mv = <200>;
-	qcom,fg-cc-cv-threshold-mv = <4390>;
 };
 
 &usb_otg_switch {
 	status = "okay";
+};
+
+&usb3 {
+       qcom,detect-dpdm-floating;
 };
 
 &pm8994_mpps {
@@ -954,7 +961,7 @@
 
 &i2c_7 {
 	silabs4705@11 { /* SiLabs FM chip, slave id 0x11*/
-		status = "disabled";
+		status = "disable";
 		compatible = "silabs,si4705";
 		reg = <0x11>;
 		vdd-supply = <&pm8994_s4>;

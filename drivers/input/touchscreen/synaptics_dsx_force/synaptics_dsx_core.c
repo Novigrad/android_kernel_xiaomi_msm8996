@@ -43,6 +43,7 @@
 #include <linux/platform_device.h>
 #include <linux/regulator/consumer.h>
 #include <linux/input/synaptics_dsx.h>
+#include <linux/hwinfo.h>
 #include "synaptics_dsx_core.h"
 #ifdef KERNEL_ABOVE_2_6_38
 #include <linux/input/mt.h>
@@ -62,6 +63,7 @@
 #endif
 
 #include <linux/mdss_io_util.h>
+#include <linux/input/touch_common_info.h>
 
 #define INPUT_PHYS_NAME "synaptics_dsx/touch_input"
 #define STYLUS_PHYS_NAME "synaptics_dsx/stylus"
@@ -5369,6 +5371,8 @@ static int synaptics_rmi4_probe(struct platform_device *pdev)
 #endif
 
 	device_init_wakeup(&pdev->dev, 1);
+
+	update_hardware_info(TYPE_TOUCH, 1); /* Synaptics */
 
 	synaptics_secure_touch_init(rmi4_data);
 	synaptics_secure_touch_stop(rmi4_data, 1);
