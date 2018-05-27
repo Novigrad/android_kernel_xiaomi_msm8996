@@ -1,11 +1,9 @@
 /*
  * Ti tusb320  driver IC for type C
  *
- * Copyright (C) 2015 xiaomi Incorporated
- *
  * Copyright (C) 2015 fengwei <fengwei@xiaomi.com	>
  * Copyright (c) 2015-2015, The Linux Foundation. All rights reserved.
- * Copyright (C) 2018 XiaoMi, Inc.
+ * Copyright (C) 2016 XiaoMi, Inc.
  *
  * This program is free software; you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -40,7 +38,7 @@ enum ti_drp_mode{
 };
 
 
-#define TI_I2C_RETRY_TIMES 5
+#define TI_I2C_RETRY_TIMES 3
 
 #define TI_STATUS_REG  0X09
 #define TI_ROLE_MODE_REG 0x0A

@@ -1,5 +1,6 @@
 /*
- * Pericom 30216a  driver IC for type C
+ * Pericom 30216C  driver IC for type C
+ *
  *
  * Copyright (C) 2015 fengwei <fengwei@xiaomi.com	>
  * Copyright (c) 2015-2015, The Linux Foundation. All rights reserved.
@@ -16,26 +17,27 @@
  * GNU General Public License for more details.
  */
 
-#ifndef _PERICOM_30216A_H_
-#define _PERICOM_30216A_H_
+#ifndef _PERICOM_30216C_H_
+#define _PERICOM_30216C_H_
 
 /*  pericom id
   *  0: Device mode
   *  1: Host mode
-  *  2: DRP mode
+  *  2: TrySNK DRP mode
+  *
   */
-enum pericom_role_mode{
+enum pericom_role_mode {
 	DEVICE_MODE,
 	HOST_MODE,
-	DRP_MODE
+	TRYSNK_DRP_MODE,
 };
 
-enum pericom_power_mode{
+enum pericom_power_mode {
 	ACTIVE_MODE,
 	POWERSAVING_MODE
 };
 
-#define PERICOM_I2C_RETRY_TIMES 5
+#define PERICOM_I2C_RETRY_TIMES 3
 
 #define PERICOM_POWER_SAVING_MASK 0x80
 #define PERICOM_POWER_SAVING_OFFSET 7
@@ -44,5 +46,7 @@ enum pericom_power_mode{
 #define PERICOM_CC_ORI_MASK  0x03
 #define PERICOM_INTERRUPT_UNMASK 0
 #define PERICOM_ROLE_OFFSET 1
+#define PERICOM_DRP2_TRY_SNK_OFFSET 6
+#define PERICOM_DRP2_TRY_SNK 0x40
 
 #endif
