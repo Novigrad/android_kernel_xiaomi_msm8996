@@ -2658,7 +2658,7 @@ static void check_sanity_work(struct work_struct *work)
 	rc = read_beat(chip, &beat_count);
 	if (rc == 0 && chip->last_beat_count != beat_count) {
 		chip->last_beat_count = beat_count;
-		queue_delayed_work(system_power_efficient_wq,
+		schedule_delayed_work(
 			&chip->check_sanity_work,
 			msecs_to_jiffies(SANITY_CHECK_PERIOD_MS));
 		return;
